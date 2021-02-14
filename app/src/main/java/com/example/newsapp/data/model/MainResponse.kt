@@ -2,16 +2,18 @@ package com.example.newsapp.data.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 data class MainResponse(
-    val articles: List<Article>,
-    val status: String,
+    val articles: List<Article>?,
+    val status: String?,
     val totalResults: Int
 
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.createTypedArrayList(Article)!!,
-        parcel.readString()!!,
+        parcel.createTypedArrayList(Article),
+        parcel.readString(),
         parcel.readInt()
     )
 
@@ -34,4 +36,5 @@ data class MainResponse(
             return arrayOfNulls(size)
         }
     }
+
 }

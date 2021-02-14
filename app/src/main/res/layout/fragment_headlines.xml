@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="8dp"
-    tools:context=".ui.home.tabs.headlines.HeadlinesFragment">
+    tools:context=".ui.home.headlines.HeadlinesFragment">
 
     <ProgressBar
         android:id="@+id/loading_indicator"

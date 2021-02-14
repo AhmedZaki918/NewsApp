@@ -18,8 +18,8 @@ class HomeAdapter(val onItemClickListener: OnItemClickListener) :
 
 
     override fun getItemViewType(position: Int): Int {
-        val currentItem = getItem(position)
-        if (currentItem?.urlToImage == "") {
+        val url = getItem(position)?.urlToImage
+        if (url == "" || url == null) {
             return 0
         }
         return 1
@@ -46,14 +46,15 @@ class HomeAdapter(val onItemClickListener: OnItemClickListener) :
 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val url = getItem(position)?.urlToImage
         val currentItem = getItem(position)
         // Layout without image
-        if (currentItem?.urlToImage == "") {
+        if (url == "" || url == null) {
             val viewHolderTwo: ViewHolderTwo = holder as ViewHolderTwo
             viewHolderTwo.binding.apply {
                 // Update views
-                tvTitle.text = currentItem.title
-                tvSource.text = currentItem.source?.name
+                tvTitle.text = currentItem?.title
+                tvSource.text = currentItem?.source?.name
             }
         } else {
             // Layout with image
@@ -64,6 +65,7 @@ class HomeAdapter(val onItemClickListener: OnItemClickListener) :
                 tvSource.text = currentItem?.source?.name
                 Picasso.get()
                     .load(currentItem?.urlToImage)
+                    .resize(400,400)
                     .placeholder(R.drawable.square)
                     .into(ivImage)
             }
@@ -77,6 +79,9 @@ class HomeAdapter(val onItemClickListener: OnItemClickListener) :
             itemView.setOnClickListener {
                 onItemClickListener.onItemClick(getItem(adapterPosition))
             }
+            binding.ibSave.setOnClickListener {
+                onItemClickListener.saveItem(getItem(adapterPosition))
+            }
         }
     }
 
@@ -86,6 +91,9 @@ class HomeAdapter(val onItemClickListener: OnItemClickListener) :
         init {
             itemView.setOnClickListener {
                 onItemClickListener.onItemClick(getItem(adapterPosition))
+            }
+            binding.ibSave.setOnClickListener {
+                onItemClickListener.saveItem(getItem(adapterPosition))
             }
         }
     }

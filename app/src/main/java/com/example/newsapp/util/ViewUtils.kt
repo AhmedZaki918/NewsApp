@@ -1,7 +1,6 @@
 package com.example.newsapp.util
 
 import android.content.Context
-import android.opengl.Visibility
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
@@ -13,4 +12,3 @@ fun Context.toast(message: String) {
 fun ProgressBar.hide() {
     visibility = View.INVISIBLE
 }
-

@@ -14,7 +14,7 @@ object Constants {
      // For paging library
      val USER_COMPARATOR = object : DiffUtil.ItemCallback<Article>() {
         override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean =
-            oldItem.source!!.id == newItem.source!!.id
+            oldItem.source?.id == newItem.source?.id
 
         @SuppressLint("DiffUtilEquals")
         override fun areContentsTheSame(oldItem: Article, newItem: Article): Boolean =

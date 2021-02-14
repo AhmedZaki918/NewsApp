@@ -5,9 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.newsapp.R
 import com.example.newsapp.databinding.ActivityMainBinding
-import com.example.newsapp.ui.favourite.FavouriteFragment
+import com.example.newsapp.ui.wishlist.WishlistFragment
 import com.example.newsapp.ui.home.HomeFragment
-import com.example.newsapp.ui.setting.SettingFragment
+import com.example.newsapp.ui.settings.SettingFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val homeFragment = HomeFragment()
-        val favouriteFragment = FavouriteFragment()
+        val favouriteFragment = WishlistFragment()
         val settingFragment = SettingFragment()
         // View default fragment
         createFragment(homeFragment)

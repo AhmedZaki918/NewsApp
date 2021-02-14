@@ -3,6 +3,7 @@ package com.example.newsapp.ui.details
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -57,15 +58,18 @@ class DetailsActivity : AppCompatActivity(), View.OnClickListener {
     private fun updateUi() {
         // Display image
         val imageUrl = article.urlToImage
-        Picasso.get()
-            .load(imageUrl)
-            .placeholder(R.drawable.square)
-            .into(binding.imageView)
+        if (imageUrl == null) {
+            binding.imageView.visibility = View.GONE
+        } else {
+            Picasso.get()
+                .load(imageUrl)
+                .placeholder(R.drawable.square)
+                .into(binding.imageView)
+        }
         // Update views
         binding.apply {
+            handleNullApi()
             tvTitle.text = article.title
-            tvDescription.text = article.description
-            tvContent.text = article.content
             tvSource.text = article.source!!.name
         }
         // Display the category of article
@@ -73,6 +77,26 @@ class DetailsActivity : AppCompatActivity(), View.OnClickListener {
             binding.tvCategory.text = resources.getText(R.string.business)
         } else {
             binding.tvCategory.text = resources.getText(R.string.headlines)
+        }
+    }
+
+
+    private fun handleNullApi() {
+        binding.apply {
+            val content = article.content
+            val description = article.description
+            // Check nullable content
+            if (content == null || content == "") {
+                tvContent.visibility = View.GONE
+            } else {
+                tvContent.text = content
+            }
+            // Check nullable description
+            if (description == null|| description == "") {
+                tvDescription.visibility = View.GONE
+            } else {
+                tvDescription.text = description
+            }
         }
     }
 }
