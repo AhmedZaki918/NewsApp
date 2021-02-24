@@ -4,8 +4,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.newsapp.data.model.Article
 import com.example.newsapp.data.repository.WishlistRepo
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class WishlistViewModel(
+@HiltViewModel
+class WishlistViewModel @Inject constructor(
     private val repo: WishlistRepo
 ) : ViewModel() {
 

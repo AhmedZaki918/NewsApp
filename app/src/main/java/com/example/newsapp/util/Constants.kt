@@ -10,6 +10,8 @@ object Constants {
     const val PAGE_SIZE = 10
     const val FIRST_PAGE = 1
     const val MODEL = "ARTICLE_MODEL"
+    const val LANGUAGE = "en"
+    const val CATEGORY = "business"
 
      // For paging library
      val USER_COMPARATOR = object : DiffUtil.ItemCallback<Article>() {

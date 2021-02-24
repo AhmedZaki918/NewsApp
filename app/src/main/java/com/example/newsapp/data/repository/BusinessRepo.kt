@@ -1,94 +1,49 @@
 package com.example.newsapp.data.repository
 
-import android.app.Application
-import androidx.paging.PageKeyedDataSource
-import com.example.newsapp.R
-import com.example.newsapp.data.database.ArticleDatabase
+import androidx.lifecycle.MutableLiveData
+import com.example.newsapp.data.database.ArticleDao
 import com.example.newsapp.data.model.Article
-import com.example.newsapp.data.network.APIClient
+import com.example.newsapp.data.network.APIInterface
 import com.example.newsapp.util.Constants
-import com.example.newsapp.util.toast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class BusinessRepo(val application: Application?) : PageKeyedDataSource<Int, Article>() {
-    constructor() : this(null)
+@Singleton
+class BusinessRepo @Inject constructor(
+    private val apiInterface: APIInterface,
+    private val articleDao: ArticleDao
+) {
+
+    // Initialization
+    private val mutableLiveData = MutableLiveData<List<Article>>()
+    private var articleList = listOf<Article>()
 
 
-    override fun loadInitial(
-        params: LoadInitialParams<Int>,
-        callback: LoadInitialCallback<Int, Article>
-    ) {
+    // Get business data from api
+    fun getBusiness(): MutableLiveData<List<Article>> {
+        // Create get request on background thread
         GlobalScope.launch(Dispatchers.IO) {
             val response =
-                APIClient.getApi.getBusiness(
-                    Constants.API_KEY, "us",
-                    "business",
-                    Constants.FIRST_PAGE + 1
+                apiInterface.getBusiness(
+                    Constants.API_KEY, Constants.LANGUAGE,
+                    Constants.CATEGORY
                 )
-
             if (response.isSuccessful) {
-                val apiResponse = response.body()!!.articles
-                apiResponse.let {
-                    callback.onResult(
-                        apiResponse!!, null,
-                        Constants.FIRST_PAGE
-                    )
-                }
+                articleList = response.body()!!.articles!!
+                mutableLiveData.postValue(articleList)
             }
         }
+        return mutableLiveData
     }
 
 
-    override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, Article>) {
-        GlobalScope.launch(Dispatchers.IO) {
-            val response =
-                APIClient.getApi.getBusiness(
-                    Constants.API_KEY, "us",
-                    "business",
-                    params.key
-                )
-
-            if (response.isSuccessful) {
-                val apiResponse = response.body()!!.articles
-                val key = params.key + 1
-                apiResponse.let {
-                    callback.onResult(apiResponse!!, key)
-                }
-            }
-        }
-    }
-
-
-    override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, Article>) {
-        GlobalScope.launch(Dispatchers.IO) {
-            val response =
-                APIClient.getApi.getBusiness(
-                    Constants.API_KEY, "us",
-                    "business",
-                    params.key
-                )
-
-            if (response.isSuccessful) {
-                val apiResponse = response.body()!!.articles
-                val key = if (params.key > 1) params.key - 1 else 0
-                apiResponse.let {
-                    callback.onResult(apiResponse!!, key)
-                }
-            }
-        }
-    }
-
-
-    // Receive data from database and notify the user data is saved
+    // Save an article to database
     fun sendResponse(article: Article?) {
         GlobalScope.launch(Dispatchers.IO) {
-            ArticleDatabase(application!!).getArticleDao().addArticle(article!!)
-            withContext(Dispatchers.Main) {
-                application.toast(application.resources.getString(R.string.saved))
-            }
+            articleDao.addArticle(article!!)
         }
     }
 }

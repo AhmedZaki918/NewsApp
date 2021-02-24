@@ -1,16 +1,20 @@
 package com.example.newsapp.data.repository
 
-import android.app.Application
 import androidx.lifecycle.MutableLiveData
-import com.example.newsapp.data.database.ArticleDatabase
+import com.example.newsapp.data.database.ArticleDao
 import com.example.newsapp.data.model.Article
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class WishlistRepo(val application: Application) {
+@Singleton
+class WishlistRepo @Inject constructor(
+    private val articleDao: ArticleDao
+) {
 
+    //Initialization
     private var articleList = listOf<Article>()
     private val articleLiveData = MutableLiveData<List<Article>>()
 
@@ -28,7 +32,7 @@ class WishlistRepo(val application: Application) {
     fun sendDeleteResponse(article: Article?): MutableLiveData<List<Article>> {
         GlobalScope.launch(Dispatchers.IO) {
             if (article != null) {
-                ArticleDatabase(application).getArticleDao().deleteArticle(article)
+                articleDao.deleteArticle(article)
                 // Update list after deleting
                 updateArticles()
             }
@@ -39,10 +43,7 @@ class WishlistRepo(val application: Application) {
 
     // Update the articles list to display it
     private suspend fun updateArticles() {
-        articleList = ArticleDatabase(application).getArticleDao().getAllArticles()
-        withContext(Dispatchers.Main)
-        {
-            articleLiveData.value = articleList
-        }
+        articleList = articleDao.getAllArticles()
+        articleLiveData.postValue(articleList)
     }
 }

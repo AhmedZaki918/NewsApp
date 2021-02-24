@@ -2,23 +2,21 @@ package com.example.newsapp.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapp.R
 import com.example.newsapp.data.model.Article
 import com.example.newsapp.databinding.LayoutHomeBinding
 import com.example.newsapp.databinding.LayoutSecondBinding
-import com.example.newsapp.util.Constants
 import com.example.newsapp.util.OnItemClickListener
 import com.squareup.picasso.Picasso
 
 
-class HomeAdapter(val onItemClickListener: OnItemClickListener) :
-    PagedListAdapter<Article, RecyclerView.ViewHolder>(Constants.USER_COMPARATOR) {
+class HomeAdapter(val onItemClickListener: OnItemClickListener, var articleList: List<Article>) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
     override fun getItemViewType(position: Int): Int {
-        val url = getItem(position)?.urlToImage
+        val url = articleList[position].urlToImage
         if (url == "" || url == null) {
             return 0
         }
@@ -46,26 +44,26 @@ class HomeAdapter(val onItemClickListener: OnItemClickListener) :
 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val url = getItem(position)?.urlToImage
-        val currentItem = getItem(position)
+        val url = articleList[position].urlToImage
+        val currentItem = articleList[position]
         // Layout without image
         if (url == "" || url == null) {
             val viewHolderTwo: ViewHolderTwo = holder as ViewHolderTwo
             viewHolderTwo.binding.apply {
                 // Update views
-                tvTitle.text = currentItem?.title
-                tvSource.text = currentItem?.source?.name
+                tvTitle.text = currentItem.title
+                tvSource.text = currentItem.source?.name
             }
         } else {
             // Layout with image
             val viewHolderOne: ViewHolderOne = holder as ViewHolderOne
             viewHolderOne.binding.apply {
                 // Update views
-                tvTitle.text = currentItem?.title
-                tvSource.text = currentItem?.source?.name
+                tvTitle.text = currentItem.title
+                tvSource.text = currentItem.source?.name
                 Picasso.get()
-                    .load(currentItem?.urlToImage)
-                    .resize(400,400)
+                    .load(currentItem.urlToImage)
+                    .resize(400, 400)
                     .placeholder(R.drawable.square)
                     .into(ivImage)
             }
@@ -77,10 +75,13 @@ class HomeAdapter(val onItemClickListener: OnItemClickListener) :
         RecyclerView.ViewHolder(binding.root) {
         init {
             itemView.setOnClickListener {
-                onItemClickListener.onItemClick(getItem(adapterPosition))
+                onItemClickListener.onItemClick(articleList[adapterPosition])
             }
-            binding.ibSave.setOnClickListener {
-                onItemClickListener.saveItem(getItem(adapterPosition))
+
+            binding.apply {
+                ibSave.setOnClickListener {
+                    onItemClickListener.saveItem(articleList[adapterPosition])
+                }
             }
         }
     }
@@ -90,11 +91,15 @@ class HomeAdapter(val onItemClickListener: OnItemClickListener) :
         RecyclerView.ViewHolder(binding.root) {
         init {
             itemView.setOnClickListener {
-                onItemClickListener.onItemClick(getItem(adapterPosition))
+                onItemClickListener.onItemClick(articleList[adapterPosition])
             }
             binding.ibSave.setOnClickListener {
-                onItemClickListener.saveItem(getItem(adapterPosition))
+                onItemClickListener.saveItem(articleList[adapterPosition])
             }
         }
+    }
+
+    override fun getItemCount(): Int {
+        return articleList.size
     }
 }

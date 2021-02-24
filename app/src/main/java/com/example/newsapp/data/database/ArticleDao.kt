@@ -1,6 +1,5 @@
 package com.example.newsapp.data.database
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.newsapp.data.model.Article
 

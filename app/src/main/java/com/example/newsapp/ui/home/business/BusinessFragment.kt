@@ -7,31 +7,31 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.newsapp.R
 import com.example.newsapp.adapter.HomeAdapter
 import com.example.newsapp.data.model.Article
-import com.example.newsapp.data.repository.BusinessRepo
 import com.example.newsapp.databinding.FragmentBusinessBinding
 import com.example.newsapp.ui.details.DetailsActivity
 import com.example.newsapp.util.Constants
 import com.example.newsapp.util.OnItemClickListener
 import com.example.newsapp.util.hide
+import com.example.newsapp.util.toast
+import dagger.hilt.android.AndroidEntryPoint
 
 
 /**
  * A simple [Fragment] subclass.
  */
+@AndroidEntryPoint
 class BusinessFragment : Fragment(), OnItemClickListener {
 
 
     // Initialization
     private var _binding: FragmentBusinessBinding? = null
     private val binding get() = _binding!!
-    private val homeAdapter = HomeAdapter(this)
     private lateinit var viewModel: BusinessViewModel
-    private lateinit var factory: BusinessViewModelFactory
-    private lateinit var repo: BusinessRepo
+    private lateinit var homeAdapter: HomeAdapter
 
 
     override fun onCreateView(
@@ -42,13 +42,9 @@ class BusinessFragment : Fragment(), OnItemClickListener {
         _binding = FragmentBusinessBinding.inflate(inflater, container, false)
 
         // Assignment
-        binding.recyclerView.layoutManager = LinearLayoutManager(activity)
-        repo = BusinessRepo(activity!!.application)
-        factory = BusinessViewModelFactory(repo)
-        viewModel = ViewModelProvider(this, factory).get(BusinessViewModel::class.java)
-
+        viewModel = ViewModelProvider(this).get(BusinessViewModel::class.java)
         // Observe the changes from live data
-        viewModel.newsPagedList.observe(viewLifecycleOwner, {
+        viewModel.getData().observe(viewLifecycleOwner, {
             updateUi(it)
         })
         return binding.root
@@ -59,18 +55,35 @@ class BusinessFragment : Fragment(), OnItemClickListener {
         val intent = Intent(activity, DetailsActivity::class.java)
         intent.putExtra(Constants.MODEL, article)
         intent.putExtra("source", "Business")
-        context!!.startActivity(intent)
+        requireContext().startActivity(intent)
     }
 
 
     override fun saveItem(article: Article?) {
-        viewModel.sendRequest(article)
+        viewModel.saveArticle(article)
+        requireActivity().toast(resources.getString(R.string.saved))
     }
 
 
-    private fun updateUi(list: PagedList<Article>) {
-        homeAdapter.submitList(list)
-        binding.recyclerView.adapter = homeAdapter
+    override fun deleteItem(article: Article?) {
+        TODO("Not yet implemented")
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+
+    // Update the list of articles
+    private fun updateUi(list: List<Article>) {
+        homeAdapter = HomeAdapter(this, list)
+        binding.recyclerView.apply {
+            layoutManager = LinearLayoutManager(activity)
+            setHasFixedSize(true)
+            adapter = homeAdapter
+        }
         binding.loadingIndicator.hide()
     }
 }

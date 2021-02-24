@@ -11,15 +11,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newsapp.adapter.WishlistAdapter
 import com.example.newsapp.data.model.Article
-import com.example.newsapp.data.repository.WishlistRepo
 import com.example.newsapp.databinding.FragmentWishlistBinding
 import com.example.newsapp.ui.details.DetailsActivity
 import com.example.newsapp.util.Constants
+import dagger.hilt.android.AndroidEntryPoint
 
 
 /**
  * A simple [Fragment] subclass.
  */
+@AndroidEntryPoint
 class WishlistFragment : Fragment(), WishlistListener {
 
 
@@ -27,8 +28,6 @@ class WishlistFragment : Fragment(), WishlistListener {
     private val binding get() = _binding!!
     private lateinit var wishlistAdapter: WishlistAdapter
     private lateinit var viewModel: WishlistViewModel
-    private lateinit var factory: WishlistViewModelFactory
-    private lateinit var repo: WishlistRepo
 
 
     override fun onCreateView(
@@ -39,7 +38,7 @@ class WishlistFragment : Fragment(), WishlistListener {
         // Inflate the layout for this fragment
         _binding = FragmentWishlistBinding.inflate(inflater, container, false)
 
-        initViews()
+        viewModel = ViewModelProvider(this).get(WishlistViewModel::class.java)
         // Observe the changes from live data
         viewModel.sendRequest().observe(viewLifecycleOwner, {
             updateUi(it)
@@ -63,24 +62,22 @@ class WishlistFragment : Fragment(), WishlistListener {
     override fun onItemClick(article: Article?) {
         val intent = Intent(activity, DetailsActivity::class.java)
         intent.putExtra(Constants.MODEL, article)
-        context!!.startActivity(intent)
+        requireContext().startActivity(intent)
     }
 
 
-    // Initialize views
-    private fun initViews() {
-        binding.recyclerView.layoutManager = LinearLayoutManager(activity)
-        wishlistAdapter = WishlistAdapter(this)
-        repo = WishlistRepo(activity!!.application)
-        factory = WishlistViewModelFactory(repo)
-        viewModel = ViewModelProvider(this, factory).get(WishlistViewModel::class.java)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 
     // Update the list of articles
     private fun updateUi(list: List<Article>) {
+        wishlistAdapter = WishlistAdapter(this)
         wishlistAdapter.submitList(list)
         binding.recyclerView.apply {
+            layoutManager = LinearLayoutManager(activity)
             setHasFixedSize(true)
             adapter = wishlistAdapter
         }

@@ -1,12 +1,7 @@
 package com.example.newsapp.data.database
 
 import androidx.room.TypeConverter
-import com.example.newsapp.data.model.Article
 import com.example.newsapp.data.model.Source
-import com.google.gson.Gson
-
-import com.google.gson.reflect.TypeToken
-import java.lang.reflect.Type
 
 
 class Converter {

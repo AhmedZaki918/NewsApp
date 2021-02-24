@@ -2,10 +2,8 @@ package com.example.newsapp.data.model
 
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 
-data class MainResponse(
+data class ArticlesResponse(
     val articles: List<Article>?,
     val status: String?,
     val totalResults: Int
@@ -27,14 +25,13 @@ data class MainResponse(
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<MainResponse> {
-        override fun createFromParcel(parcel: Parcel): MainResponse {
-            return MainResponse(parcel)
+    companion object CREATOR : Parcelable.Creator<ArticlesResponse> {
+        override fun createFromParcel(parcel: Parcel): ArticlesResponse {
+            return ArticlesResponse(parcel)
         }
 
-        override fun newArray(size: Int): Array<MainResponse?> {
+        override fun newArray(size: Int): Array<ArticlesResponse?> {
             return arrayOfNulls(size)
         }
     }
-
 }

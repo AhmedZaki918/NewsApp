@@ -8,7 +8,9 @@ import com.example.newsapp.databinding.ActivityMainBinding
 import com.example.newsapp.ui.wishlist.WishlistFragment
 import com.example.newsapp.ui.home.HomeFragment
 import com.example.newsapp.ui.settings.SettingFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
