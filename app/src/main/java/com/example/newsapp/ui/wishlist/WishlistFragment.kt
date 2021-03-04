@@ -5,15 +5,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.newsapp.R
 import com.example.newsapp.adapter.WishlistAdapter
 import com.example.newsapp.data.model.Article
 import com.example.newsapp.databinding.FragmentWishlistBinding
 import com.example.newsapp.ui.details.DetailsActivity
-import com.example.newsapp.util.Constants
+import com.example.newsapp.util.startActivity
+import com.example.newsapp.util.switchVisibility
+import com.example.newsapp.util.toast
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -21,9 +25,9 @@ import dagger.hilt.android.AndroidEntryPoint
  * A simple [Fragment] subclass.
  */
 @AndroidEntryPoint
-class WishlistFragment : Fragment(), WishlistListener {
+class WishlistFragment : Fragment(), WishlistListener, View.OnClickListener {
 
-
+    // Initialization
     private var _binding: FragmentWishlistBinding? = null
     private val binding get() = _binding!!
     private lateinit var wishlistAdapter: WishlistAdapter
@@ -38,12 +42,23 @@ class WishlistFragment : Fragment(), WishlistListener {
         // Inflate the layout for this fragment
         _binding = FragmentWishlistBinding.inflate(inflater, container, false)
 
+        // Assignment
         viewModel = ViewModelProvider(this).get(WishlistViewModel::class.java)
+        wishlistAdapter = WishlistAdapter(this)
         // Observe the changes from live data
         viewModel.sendRequest().observe(viewLifecycleOwner, {
             updateUi(it)
         })
+
+        binding.floatingButton.setOnClickListener(this)
         return binding.root
+    }
+
+
+    override fun onClick(v: View) {
+        if (v.id == R.id.floating_button) {
+            openDialog()
+        }
     }
 
 
@@ -55,14 +70,23 @@ class WishlistFragment : Fragment(), WishlistListener {
 
 
     override fun onShare(article: Article?) {
-        TODO("Not yet implemented")
+        Intent().apply {
+            if (article != null) {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, article.url)
+                type = "text/plain"
+                startActivity(this)
+            } else {
+                requireActivity().toast(R.string.missingUrl)
+            }
+        }
     }
 
 
     override fun onItemClick(article: Article?) {
-        val intent = Intent(activity, DetailsActivity::class.java)
-        intent.putExtra(Constants.MODEL, article)
-        requireContext().startActivity(intent)
+        startActivity(
+            requireActivity(), article!!, DetailsActivity::class.java
+        )
     }
 
 
@@ -74,12 +98,29 @@ class WishlistFragment : Fragment(), WishlistListener {
 
     // Update the list of articles
     private fun updateUi(list: List<Article>) {
-        wishlistAdapter = WishlistAdapter(this)
-        wishlistAdapter.submitList(list)
-        binding.recyclerView.apply {
-            layoutManager = LinearLayoutManager(activity)
-            setHasFixedSize(true)
-            adapter = wishlistAdapter
+        binding.apply {
+            // Check if the list is empty then update ui
+            switchVisibility(list, recyclerView, tvNoContent)
+            wishlistAdapter.submitList(list)
+            recyclerView.apply {
+                layoutManager = LinearLayoutManager(activity)
+                setHasFixedSize(true)
+                adapter = wishlistAdapter
+            }
         }
+    }
+
+
+    // Open alert dialog
+    private fun openDialog() {
+        val builder = AlertDialog.Builder(requireActivity())
+        builder.setTitle(R.string.deleteAll)
+            .setMessage(R.string.deleteMess)
+            .setPositiveButton((R.string.delete)) { _, _ ->
+                viewModel.deleteAll().observe(viewLifecycleOwner) {
+                    updateUi(it)
+                }
+            }
+        builder.create().show()
     }
 }

@@ -7,22 +7,20 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "articles")
 data class Article(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int,
-    val author: String?,
+    @PrimaryKey
+    val title: String,
     val content: String?,
     val description: String?,
     val publishedAt: String?,
     val source: Source?,
-    val title: String?,
+    val author: String?,
     val url: String?,
     val urlToImage: String?
 ) : Parcelable {
 
 
     constructor(parcel: Parcel) : this(
-        parcel.readInt(),
-        parcel.readString(),
+        parcel.readString()!!,
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
@@ -34,20 +32,21 @@ data class Article(
 
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(id)
-        parcel.writeString(author)
+        parcel.writeString(title)
         parcel.writeString(content)
         parcel.writeString(description)
         parcel.writeString(publishedAt)
         parcel.writeParcelable(source, flags)
-        parcel.writeString(title)
+        parcel.writeString(author)
         parcel.writeString(url)
         parcel.writeString(urlToImage)
     }
 
+
     override fun describeContents(): Int {
         return 0
     }
+
 
     companion object CREATOR : Parcelable.Creator<Article> {
         override fun createFromParcel(parcel: Parcel): Article {

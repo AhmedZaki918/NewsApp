@@ -9,9 +9,10 @@ import retrofit2.http.Query
 interface APIInterface {
 
     @GET("top-headlines")
-   suspend fun getHeadlines(
+    suspend fun getHeadlines(
         @Query("apiKey") key: String,
         @Query("language") language: String,
+        @Query("page") page: Int
     ): Response<ArticlesResponse>
 
 
@@ -19,6 +20,7 @@ interface APIInterface {
     suspend fun getBusiness(
         @Query("apiKey") key: String,
         @Query("language") language: String,
-        @Query("category") category: String
+        @Query("category") category: String,
+        @Query("page") page: Int
     ): Response<ArticlesResponse>
 }

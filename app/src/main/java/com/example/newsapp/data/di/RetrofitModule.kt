@@ -2,6 +2,7 @@ package com.example.newsapp.data.di
 
 import com.example.newsapp.data.network.APIInterface
 import com.example.newsapp.util.Constants
+import com.example.newsapp.util.OnItemClickListener
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,4 +29,6 @@ object RetrofitModule {
     @Singleton
     fun provideApiInterface(retrofit: Retrofit): APIInterface =
         retrofit.create(APIInterface::class.java)
+
+
 }

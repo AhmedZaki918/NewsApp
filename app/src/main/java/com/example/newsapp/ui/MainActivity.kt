@@ -1,5 +1,6 @@
 package com.example.newsapp.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -8,6 +9,8 @@ import com.example.newsapp.databinding.ActivityMainBinding
 import com.example.newsapp.ui.wishlist.WishlistFragment
 import com.example.newsapp.ui.home.HomeFragment
 import com.example.newsapp.ui.settings.SettingFragment
+import com.example.newsapp.util.startActivity
+import com.example.newsapp.util.toast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

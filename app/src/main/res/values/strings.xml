@@ -7,4 +7,10 @@
     <string name="headlines">Top Headlines</string>
     <string name="read_more">Read more</string>
     <string name="saved">Item saved</string>
+    <string name="removed">Removed</string>
+    <string name="deleteAll">Delete All</string>
+    <string name="deleteMess">Are you sure you want to delete all articles from saved</string>
+    <string name="delete">Delete</string>
+    <string name="missingUrl">No url available</string>
+    <string name="connection_lost">Connection lost</string>
 </resources>

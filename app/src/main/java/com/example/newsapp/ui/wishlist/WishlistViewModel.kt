@@ -21,4 +21,9 @@ class WishlistViewModel @Inject constructor(
     fun sendDeleteRequest(article: Article?): MutableLiveData<List<Article>> {
         return repo.sendDeleteResponse(article)
     }
+
+
+    fun deleteAll(): MutableLiveData<List<Article>> {
+       return repo.deleteArticles()
+    }
 }

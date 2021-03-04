@@ -9,13 +9,13 @@
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="0dp"
-        android:ellipsize="end"
-        android:maxLength="100"
-        android:maxLines="3"
         android:layout_height="70dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
+        android:ellipsize="end"
+        android:maxLength="100"
+        android:maxLines="3"
         android:textColor="@color/black"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -48,15 +48,16 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_title"
         tools:text="bbc.com/news" />
 
-    <ImageButton
+    <CheckBox
         android:id="@+id/ib_save"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:background="@drawable/toggle_selector"
+        android:button="@null"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_bookmark_border" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

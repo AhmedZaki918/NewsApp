@@ -7,7 +7,7 @@ import com.example.newsapp.data.model.Article
 
 @Database(
     entities = [Article::class],
-    version = 2,
+    version = 1, exportSchema = false
 )
 @TypeConverters(Converter::class)
 abstract class ArticleDatabase : RoomDatabase() {

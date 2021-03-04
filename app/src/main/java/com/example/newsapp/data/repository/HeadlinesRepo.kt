@@ -1,13 +1,15 @@
 package com.example.newsapp.data.repository
 
-import androidx.lifecycle.MutableLiveData
+import androidx.paging.PageKeyedDataSource
 import com.example.newsapp.data.database.ArticleDao
 import com.example.newsapp.data.model.Article
+import com.example.newsapp.data.model.ArticlesResponse
 import com.example.newsapp.data.network.APIInterface
 import com.example.newsapp.util.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,42 +18,71 @@ import javax.inject.Singleton
 class HeadlinesRepo @Inject constructor(
     private val articleDao: ArticleDao,
     private val apiInterface: APIInterface
-) {
-
-    //Initialization
-    private val mutableLiveData = MutableLiveData<List<Article>>()
-    private var articleList = listOf<Article>()
+) : PageKeyedDataSource<Int, Article>() {
 
 
-    // Get headlines articles via api
-    fun getData(): MutableLiveData<List<Article>> {
-        // Create get request on background thread
+    override fun loadInitial(
+        params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, Article>
+    ) {
         GlobalScope.launch(Dispatchers.IO) {
-            val response =
-                apiInterface.getHeadlines(
-                    Constants.API_KEY, Constants.LANGUAGE
-                )
+            val response = createRequest(Constants.FIRST_PAGE + 1)
             if (response.isSuccessful) {
-                articleList = response.body()!!.articles!!
-                mutableLiveData.postValue(articleList)
+                callback.onResult(
+                    response.body()!!.articles!!,
+                    null,
+                    Constants.FIRST_PAGE
+                )
             }
         }
-        return mutableLiveData
     }
 
 
-    // Receive data from database and notify the user data is saved
-    fun sendResponse(article: Article?) {
+    override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, Article>) {
+        GlobalScope.launch(Dispatchers.IO) {
+            val response = createRequest(params.key)
+            if (response.isSuccessful) {
+                callback.onResult(
+                    response.body()!!.articles!!,
+                    if (params.key > 1) params.key - 1 else 0
+                )
+            }
+        }
+    }
+
+
+    override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, Article>) {
+        GlobalScope.launch(Dispatchers.IO) {
+            val response = createRequest(params.key)
+            if (response.isSuccessful) {
+                callback.onResult(
+                    response.body()!!.articles!!,
+                    params.key + 1
+                )
+            }
+        }
+    }
+
+
+    // Add one article to database
+    fun sendAdd(article: Article?) {
         GlobalScope.launch(Dispatchers.IO) {
             articleDao.addArticle(article!!)
         }
     }
 
-
     // Delete one item from database
-    fun sendDeleteResponse(article: Article?) {
+    fun sendDelete(article: Article?) {
         GlobalScope.launch(Dispatchers.IO) {
             articleDao.deleteArticle(article!!)
         }
+    }
+
+    // Get request from api
+    private suspend fun createRequest(page: Int): Response<ArticlesResponse> {
+        return apiInterface.getHeadlines(
+            Constants.API_KEY,
+            Constants.LANGUAGE,
+            page
+        )
     }
 }

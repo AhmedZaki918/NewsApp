@@ -15,11 +15,13 @@ data class ArticlesResponse(
         parcel.readInt()
     )
 
+
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeTypedList(articles)
         parcel.writeString(status)
         parcel.writeInt(totalResults)
     }
+
 
     override fun describeContents(): Int {
         return 0

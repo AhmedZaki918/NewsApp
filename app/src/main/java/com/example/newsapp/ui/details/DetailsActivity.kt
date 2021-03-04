@@ -10,6 +10,7 @@ import com.example.newsapp.R
 import com.example.newsapp.data.model.Article
 import com.example.newsapp.databinding.ActivityDetailsBinding
 import com.example.newsapp.util.Constants
+import com.example.newsapp.util.checkNull
 import com.squareup.picasso.Picasso
 
 
@@ -18,7 +19,7 @@ class DetailsActivity : AppCompatActivity(), View.OnClickListener {
     // Initialization
     private lateinit var binding: ActivityDetailsBinding
     private lateinit var article: Article
-    private var source: String? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,10 +29,8 @@ class DetailsActivity : AppCompatActivity(), View.OnClickListener {
         // Assignment
         val data = intent
         article = data.getParcelableExtra(Constants.MODEL)!!
-        source = data.getStringExtra("source")
         // Update ui for user
         updateUi()
-        // Click listener
         binding.tvReadMore.setOnClickListener(this)
     }
 
@@ -56,46 +55,23 @@ class DetailsActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun updateUi() {
         // Display image
-        val imageUrl = article.urlToImage
-        if (imageUrl == null) {
-            binding.imageView.visibility = View.GONE
-        } else {
-            Picasso.get()
-                .load(imageUrl)
-                .placeholder(R.drawable.square)
-                .into(binding.imageView)
-        }
-        // Update views
         binding.apply {
-            handleNullApi()
-            tvTitle.text = article.title
-            tvSource.text = article.source!!.name
+            if (article.urlToImage == null) {
+                imageView.visibility = View.GONE
+            } else {
+                Picasso.get()
+                    .load(article.urlToImage)
+                    .placeholder(R.drawable.square)
+                    .into(imageView)
+            }
         }
-        // Display the category of article
-        if (source == resources.getText(R.string.business)) {
-            binding.tvCategory.text = resources.getText(R.string.business)
-        } else {
-            binding.tvCategory.text = resources.getText(R.string.headlines)
-        }
-    }
-
-
-    private fun handleNullApi() {
+        // Check nullable from api and update ui
         binding.apply {
-            val content = article.content
-            val description = article.description
-            // Check nullable content
-            if (content == null || content == "") {
-                tvContent.visibility = View.GONE
-            } else {
-                tvContent.text = content
-            }
-            // Check nullable description
-            if (description == null|| description == "") {
-                tvDescription.visibility = View.GONE
-            } else {
-                tvDescription.text = description
-            }
+            checkNull(article.content, tvContent)
+            checkNull(article.description, tvDescription)
+            checkNull(article.author, tvAuthor)
+            checkNull(article.title, tvTitle)
+            checkNull(article.source?.name, tvSource)
         }
     }
 }

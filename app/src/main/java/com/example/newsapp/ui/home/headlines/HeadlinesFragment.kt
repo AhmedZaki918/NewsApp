@@ -1,21 +1,25 @@
 package com.example.newsapp.ui.home.headlines
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.newsapp.R
 import com.example.newsapp.adapter.HomeAdapter
+import com.example.newsapp.data.database.ArticleDao
 import com.example.newsapp.data.model.Article
 import com.example.newsapp.databinding.FragmentHeadlinesBinding
 import com.example.newsapp.ui.details.DetailsActivity
-import com.example.newsapp.util.Constants
 import com.example.newsapp.util.OnItemClickListener
 import com.example.newsapp.util.hide
+import com.example.newsapp.util.startActivity
+import com.example.newsapp.util.toast
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 /**
@@ -31,6 +35,9 @@ class HeadlinesFragment : Fragment(), OnItemClickListener {
     private lateinit var homeAdapter: HomeAdapter
     private lateinit var viewModel: HeadlinesViewModel
 
+    @Inject
+    lateinit var articleDao: ArticleDao
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,9 +47,10 @@ class HeadlinesFragment : Fragment(), OnItemClickListener {
         _binding = FragmentHeadlinesBinding.inflate(inflater, container, false)
 
         // Assignment
+        homeAdapter = HomeAdapter(this, articleDao)
         viewModel = ViewModelProvider(this).get(HeadlinesViewModel::class.java)
-        // Observe the changes from live data
-        viewModel.getArticles().observe(viewLifecycleOwner, {
+//        // Observe the changes from live data
+        viewModel.newsPagedList.observe(viewLifecycleOwner, {
             updateUi(it)
         })
         return binding.root
@@ -50,19 +58,21 @@ class HeadlinesFragment : Fragment(), OnItemClickListener {
 
 
     override fun onItemClick(article: Article?) {
-        val intent = Intent(activity, DetailsActivity::class.java)
-        intent.putExtra(Constants.MODEL, article)
-        requireContext().startActivity(intent)
+        startActivity(
+            requireActivity(), article!!, DetailsActivity::class.java
+        )
     }
 
 
-    override fun saveItem(article: Article?) {
+    override fun onSave(article: Article?) {
         viewModel.saveArticle(article)
+        requireActivity().toast(R.string.saved)
     }
 
 
-    override fun deleteItem(article: Article?) {
+    override fun onDelete(article: Article?) {
         viewModel.deleteRequest(article)
+        requireActivity().toast(R.string.removed)
     }
 
 
@@ -72,11 +82,10 @@ class HeadlinesFragment : Fragment(), OnItemClickListener {
     }
 
 
-    private fun updateUi(list: List<Article>) {
-        homeAdapter = HomeAdapter(this, list)
+    private fun updateUi(list: PagedList<Article>) {
         binding.recyclerView.apply {
+            homeAdapter.submitList(list)
             layoutManager = LinearLayoutManager(activity)
-            setHasFixedSize(true)
             adapter = homeAdapter
         }
         binding.loadingIndicator.hide()

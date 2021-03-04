@@ -33,9 +33,17 @@ class WishlistRepo @Inject constructor(
         GlobalScope.launch(Dispatchers.IO) {
             if (article != null) {
                 articleDao.deleteArticle(article)
-                // Update list after deleting
                 updateArticles()
             }
+        }
+        return articleLiveData
+    }
+
+
+    fun deleteArticles(): MutableLiveData<List<Article>> {
+        GlobalScope.launch(Dispatchers.IO) {
+            articleDao.deleteAll()
+            updateArticles()
         }
         return articleLiveData
     }

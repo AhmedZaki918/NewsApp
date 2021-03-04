@@ -1,6 +1,7 @@
 package com.example.newsapp.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapp.R
@@ -15,57 +16,75 @@ class WishlistAdapter(
     RecyclerView.Adapter<WishlistAdapter.ViewHolder>() {
 
     // Initialization
-    private lateinit var articleList: List<Article>
+    private var list: List<Article> = listOf()
+
 
     // Create view holder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WishlistAdapter.ViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
         val layoutWishlistBinding = LayoutWishilstBinding.inflate(
-            layoutInflater, parent,
+            LayoutInflater.from(parent.context), parent,
             false
         )
         return ViewHolder(layoutWishlistBinding)
     }
 
+
     // Bind view holder
     override fun onBindViewHolder(holder: WishlistAdapter.ViewHolder, position: Int) {
         // Get current position
-        val currentItem = articleList[position]
-        holder.binding.apply {
-            tvTitle.text = currentItem.title
-            tvDate.text = currentItem.publishedAt
-            Picasso.get()
-                .load(currentItem.urlToImage)
-                .resize(400, 400)
-                .placeholder(R.drawable.square)
-                .into(ivArticle)
-        }
+        val currentItem = list[position]
+        holder.bind(currentItem)
     }
+
 
     // Return the size of list
     override fun getItemCount(): Int {
-        return articleList.size
+        return list.size
     }
 
-    // View holder class
-    inner class ViewHolder(val binding: LayoutWishilstBinding) :
-        RecyclerView.ViewHolder(binding.root) {
 
+    // View holder class
+    inner class ViewHolder(private val binding: LayoutWishilstBinding) :
+        RecyclerView.ViewHolder(binding.root), View.OnClickListener {
         init {
             binding.apply {
-                itemView.setOnClickListener {
-                    wishlistListener.onItemClick(articleList[adapterPosition])
-                }
+                ibDelete.setOnClickListener(this@ViewHolder)
+                ibShare.setOnClickListener(this@ViewHolder)
+                itemView.setOnClickListener(this@ViewHolder)
+            }
+        }
 
-                ibDelete.setOnClickListener {
-                    wishlistListener.onDelete(articleList[adapterPosition])
+        // Bind data
+        fun bind(article: Article) {
+            binding.apply {
+                tvTitle.text = article.title
+                tvDate.text = article.publishedAt
+                Picasso.get()
+                    .load(article.urlToImage)
+                    .resize(400, 400)
+                    .placeholder(R.drawable.square)
+                    .into(ivArticle)
+            }
+        }
+
+        override fun onClick(v: View) {
+            when (v.id) {
+                R.id.ib_delete -> {
+                    wishlistListener.onDelete(list[adapterPosition])
+                }
+                R.id.ib_share -> {
+                    wishlistListener.onShare(list[adapterPosition])
+                }
+                else -> {
+                    wishlistListener.onItemClick(list[adapterPosition])
                 }
             }
         }
     }
 
+
     // Setter for articles list
     fun submitList(list: List<Article>) {
-        articleList = list
+        this.list = list
     }
 }
