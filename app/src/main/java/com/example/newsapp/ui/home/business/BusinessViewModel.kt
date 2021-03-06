@@ -1,16 +1,14 @@
 package com.example.newsapp.ui.home.business
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.paging.LivePagedListBuilder
-import androidx.paging.PagedList
+import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import com.example.newsapp.data.database.ArticleDao
 import com.example.newsapp.data.model.Article
 import com.example.newsapp.data.network.APIInterface
-import com.example.newsapp.data.repository.BusinessRepo
-import com.example.newsapp.data.repository.HeadlinesRepo
-import com.example.newsapp.ui.home.headlines.HeadlinesFactory
+import com.example.newsapp.ui.home.headlines.HeadlinesRepo
 import com.example.newsapp.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -20,34 +18,19 @@ import javax.inject.Inject
 class BusinessViewModel @Inject constructor(
     private val repo: BusinessRepo,
     articleDao: ArticleDao,
-    apiInterface: APIInterface
+    api: APIInterface
 ) :
     ViewModel() {
 
-
-    val newsPagedList: LiveData<PagedList<Article>>
-    private val liveRepo: LiveData<BusinessRepo>
-
-    init {
-        val itemDataSourceFactory =
-            BusinessFactory(articleDao, apiInterface)
-        liveRepo = itemDataSourceFactory.userLiveDataSource
-
-        val config = PagedList.Config.Builder()
-            .setEnablePlaceholders(false)
-            .setPageSize(Constants.PAGE_SIZE)
-            .build()
-
-        newsPagedList = LivePagedListBuilder(itemDataSourceFactory, config)
-            .build()
-    }
+    val articles = Pager(PagingConfig(pageSize = Constants.PAGE_SIZE)) {
+        BusinessRepo(articleDao, api)
+    }.flow.cachedIn(viewModelScope)
 
 
     // Send request to repository to save data
     fun saveArticle(article: Article?) {
-        repo.sendResponse(article)
+        repo.sendAdd(article)
     }
-
 
     // Delete request to repository
     fun deleteRequest(article: Article?) {

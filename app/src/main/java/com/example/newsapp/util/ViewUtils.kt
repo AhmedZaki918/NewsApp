@@ -7,7 +7,6 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import com.example.newsapp.data.model.Article
-import java.util.*
 
 
 fun Context.toast(message: Int) {
@@ -34,13 +33,23 @@ fun checkNull(content: String?, view: TextView) {
 }
 
 
-fun <T> switchVisibility(list: List<T>, firstView: View, secondView: View) {
+fun <T> switchVisibility(
+    list: List<T>,
+    firstView: View,
+    secondView: View,
+    thirdView: View,
+    fourthView: View
+) {
     if (list.isEmpty()) {
         firstView.visibility = View.GONE
         secondView.visibility = View.VISIBLE
+        thirdView.visibility = View.VISIBLE
+        fourthView.visibility = View.VISIBLE
     } else {
         firstView.visibility = View.VISIBLE
         secondView.visibility = View.GONE
+        thirdView.visibility = View.GONE
+        fourthView.visibility = View.GONE
     }
 }
 

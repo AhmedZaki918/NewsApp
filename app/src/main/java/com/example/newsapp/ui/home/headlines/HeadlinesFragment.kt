@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.paging.PagedList
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newsapp.R
 import com.example.newsapp.adapter.HomeAdapter
@@ -19,6 +19,8 @@ import com.example.newsapp.util.hide
 import com.example.newsapp.util.startActivity
 import com.example.newsapp.util.toast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -45,15 +47,24 @@ class HeadlinesFragment : Fragment(), OnItemClickListener {
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentHeadlinesBinding.inflate(inflater, container, false)
+        initViews()
 
-        // Assignment
-        homeAdapter = HomeAdapter(this, articleDao)
-        viewModel = ViewModelProvider(this).get(HeadlinesViewModel::class.java)
-//        // Observe the changes from live data
-        viewModel.newsPagedList.observe(viewLifecycleOwner, {
-            updateUi(it)
-        })
+        lifecycleScope.launch {
+            viewModel.articles.collectLatest { pagedData ->
+                homeAdapter.submitData(pagedData)
+            }
+        }
+
+        binding.loadingIndicator.hide()
         return binding.root
+    }
+
+
+    private fun initViews() {
+        homeAdapter = HomeAdapter(this, articleDao)
+        binding.recyclerView.layoutManager = LinearLayoutManager(activity)
+        binding.recyclerView.adapter = homeAdapter
+        viewModel = ViewModelProvider(this).get(HeadlinesViewModel::class.java)
     }
 
 
@@ -79,15 +90,5 @@ class HeadlinesFragment : Fragment(), OnItemClickListener {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-
-    private fun updateUi(list: PagedList<Article>) {
-        binding.recyclerView.apply {
-            homeAdapter.submitList(list)
-            layoutManager = LinearLayoutManager(activity)
-            adapter = homeAdapter
-        }
-        binding.loadingIndicator.hide()
     }
 }

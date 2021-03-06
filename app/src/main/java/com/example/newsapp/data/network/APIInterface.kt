@@ -13,7 +13,7 @@ interface APIInterface {
         @Query("apiKey") key: String,
         @Query("language") language: String,
         @Query("page") page: Int
-    ): Response<ArticlesResponse>
+    ): ArticlesResponse
 
 
     @GET("top-headlines")
@@ -22,5 +22,5 @@ interface APIInterface {
         @Query("language") language: String,
         @Query("category") category: String,
         @Query("page") page: Int
-    ): Response<ArticlesResponse>
+    ): ArticlesResponse
 }

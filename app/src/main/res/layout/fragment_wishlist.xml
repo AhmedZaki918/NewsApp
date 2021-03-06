@@ -33,14 +33,38 @@
         android:id="@+id/tv_no_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nothing to show"
+        android:text="@string/no_saved_articles"
         android:textColor="@color/black"
-        android:textSize="30sp"
+        android:textSize="25sp"
+        android:textStyle="bold"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/description_no_saved"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_no_content" />
+
+    <ImageView
+        android:id="@+id/iv_no_articles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/no_articles"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/tv_no_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

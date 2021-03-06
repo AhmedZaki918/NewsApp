@@ -7,7 +7,6 @@ object Constants {
     const val BASE_URL = "https://newsapi.org/v2/"
     const val API_KEY = "Your Api Key"
     const val PAGE_SIZE = 20
-    const val FIRST_PAGE = 1
     const val MODEL = "ARTICLE_MODEL"
     const val LANGUAGE = "en"
     const val CATEGORY = "business"
@@ -18,6 +17,6 @@ object Constants {
             oldItem.source?.id == newItem.source?.id
 
         override fun areContentsTheSame(oldItem: Article, newItem: Article) =
-            newItem == oldItem
+            oldItem ==  newItem
     }
 }

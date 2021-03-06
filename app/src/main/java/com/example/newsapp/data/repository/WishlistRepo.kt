@@ -3,6 +3,7 @@ package com.example.newsapp.data.repository
 import androidx.lifecycle.MutableLiveData
 import com.example.newsapp.data.database.ArticleDao
 import com.example.newsapp.data.model.Article
+import com.example.newsapp.util.Coroutines
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -21,7 +22,7 @@ class WishlistRepo @Inject constructor(
 
     // Receive data from database and update ui
     fun sendResponse(): MutableLiveData<List<Article>> {
-        GlobalScope.launch(Dispatchers.IO) {
+        Coroutines.background {
             updateArticles()
         }
         return articleLiveData
@@ -30,7 +31,7 @@ class WishlistRepo @Inject constructor(
 
     // Delete one item from database
     fun sendDeleteResponse(article: Article?): MutableLiveData<List<Article>> {
-        GlobalScope.launch(Dispatchers.IO) {
+        Coroutines.background {
             if (article != null) {
                 articleDao.deleteArticle(article)
                 updateArticles()
@@ -40,8 +41,9 @@ class WishlistRepo @Inject constructor(
     }
 
 
+    // Delete all articles from database
     fun deleteArticles(): MutableLiveData<List<Article>> {
-        GlobalScope.launch(Dispatchers.IO) {
+        Coroutines.background {
             articleDao.deleteAll()
             updateArticles()
         }

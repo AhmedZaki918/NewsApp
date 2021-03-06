@@ -9,8 +9,10 @@
     <string name="saved">Item saved</string>
     <string name="removed">Removed</string>
     <string name="deleteAll">Delete All</string>
-    <string name="deleteMess">Are you sure you want to delete all articles from saved</string>
+    <string name="deleteMess">Are you sure you want to delete all articles from saved?</string>
     <string name="delete">Delete</string>
     <string name="missingUrl">No url available</string>
     <string name="connection_lost">Connection lost</string>
+    <string name="no_saved_articles">No saved articles</string>
+    <string name="description_no_saved">Go back and save articles here</string>
 </resources>

@@ -100,7 +100,7 @@ class WishlistFragment : Fragment(), WishlistListener, View.OnClickListener {
     private fun updateUi(list: List<Article>) {
         binding.apply {
             // Check if the list is empty then update ui
-            switchVisibility(list, recyclerView, tvNoContent)
+            switchVisibility(list, recyclerView, tvNoContent, tvDescription, ivNoArticles)
             wishlistAdapter.submitList(list)
             recyclerView.apply {
                 layoutManager = LinearLayoutManager(activity)
