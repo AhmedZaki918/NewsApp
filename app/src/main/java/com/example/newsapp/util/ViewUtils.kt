@@ -13,9 +13,11 @@ fun Context.toast(message: Int) {
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }
 
+
 fun ProgressBar.hide() {
     visibility = View.INVISIBLE
 }
+
 
 fun <T> startActivity(context: Context, article: Article?, cls: Class<T>) {
     val intent = Intent(context, cls)
@@ -33,23 +35,21 @@ fun checkNull(content: String?, view: TextView) {
 }
 
 
-fun <T> switchVisibility(
-    list: List<T>,
-    firstView: View,
-    secondView: View,
-    thirdView: View,
-    fourthView: View
+fun hideVisibility(
+    firstView: View, secondView: View, thirdView: View, fourthView: View
 ) {
-    if (list.isEmpty()) {
-        firstView.visibility = View.GONE
-        secondView.visibility = View.VISIBLE
-        thirdView.visibility = View.VISIBLE
-        fourthView.visibility = View.VISIBLE
-    } else {
-        firstView.visibility = View.VISIBLE
-        secondView.visibility = View.GONE
-        thirdView.visibility = View.GONE
-        fourthView.visibility = View.GONE
-    }
+    firstView.visibility = View.GONE
+    secondView.visibility = View.VISIBLE
+    thirdView.visibility = View.VISIBLE
+    fourthView.visibility = View.VISIBLE
 }
 
+
+fun showVisibility(
+    firstView: View, secondView: View, thirdView: View, fourthView: View
+) {
+    firstView.visibility = View.VISIBLE
+    secondView.visibility = View.GONE
+    thirdView.visibility = View.GONE
+    fourthView.visibility = View.GONE
+}

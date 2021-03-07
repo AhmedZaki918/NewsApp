@@ -15,9 +15,7 @@ import com.example.newsapp.adapter.WishlistAdapter
 import com.example.newsapp.data.model.Article
 import com.example.newsapp.databinding.FragmentWishlistBinding
 import com.example.newsapp.ui.details.DetailsActivity
-import com.example.newsapp.util.startActivity
-import com.example.newsapp.util.switchVisibility
-import com.example.newsapp.util.toast
+import com.example.newsapp.util.*
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -25,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
  * A simple [Fragment] subclass.
  */
 @AndroidEntryPoint
-class WishlistFragment : Fragment(), WishlistListener, View.OnClickListener {
+class WishlistFragment : Fragment(), OnItemClickListener, View.OnClickListener {
 
     // Initialization
     private var _binding: FragmentWishlistBinding? = null
@@ -43,8 +41,8 @@ class WishlistFragment : Fragment(), WishlistListener, View.OnClickListener {
         _binding = FragmentWishlistBinding.inflate(inflater, container, false)
 
         // Assignment
-        viewModel = ViewModelProvider(this).get(WishlistViewModel::class.java)
         wishlistAdapter = WishlistAdapter(this)
+        viewModel = ViewModelProvider(this).get(WishlistViewModel::class.java)
         // Observe the changes from live data
         viewModel.sendRequest().observe(viewLifecycleOwner, {
             updateUi(it)
@@ -56,37 +54,34 @@ class WishlistFragment : Fragment(), WishlistListener, View.OnClickListener {
 
 
     override fun onClick(v: View) {
-        if (v.id == R.id.floating_button) {
+        if (v.id == R.id.floating_button)
             openDialog()
-        }
     }
 
 
-    override fun onDelete(article: Article?) {
-        viewModel.sendDeleteRequest(article).observe(viewLifecycleOwner, {
-            updateUi(it)
-        })
-    }
-
-
-    override fun onShare(article: Article?) {
-        Intent().apply {
-            if (article != null) {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, article.url)
-                type = "text/plain"
-                startActivity(this)
-            } else {
-                requireActivity().toast(R.string.missingUrl)
+    override fun onItemClick(article: Article?, operation: String) {
+        when (operation) {
+            "delete" -> {
+                viewModel.sendDeleteRequest(article).observe(viewLifecycleOwner, {
+                    updateUi(it)
+                })
             }
+            "share" -> {
+                Intent().apply {
+                    if (article != null) {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, article.url)
+                        type = "text/plain"
+                        startActivity(this)
+                    } else
+                        requireActivity().toast(R.string.missingUrl)
+                }
+            }
+            else ->
+                startActivity(
+                    requireActivity(), article!!, DetailsActivity::class.java
+                )
         }
-    }
-
-
-    override fun onItemClick(article: Article?) {
-        startActivity(
-            requireActivity(), article!!, DetailsActivity::class.java
-        )
     }
 
 
@@ -99,13 +94,14 @@ class WishlistFragment : Fragment(), WishlistListener, View.OnClickListener {
     // Update the list of articles
     private fun updateUi(list: List<Article>) {
         binding.apply {
-            // Check if the list is empty then update ui
-            switchVisibility(list, recyclerView, tvNoContent, tvDescription, ivNoArticles)
-            wishlistAdapter.submitList(list)
-            recyclerView.apply {
-                layoutManager = LinearLayoutManager(activity)
-                setHasFixedSize(true)
-                adapter = wishlistAdapter
+            // Check if the list is empty
+            if (list.isEmpty()) {
+                hideVisibility(recyclerView, tvNoContent, tvDescription, ivNoArticles)
+            } else {
+                showVisibility(recyclerView, tvNoContent, tvDescription, ivNoArticles)
+                recyclerView.layoutManager = LinearLayoutManager(activity)
+                recyclerView.adapter = wishlistAdapter
+                wishlistAdapter.submitList(list)
             }
         }
     }

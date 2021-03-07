@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newsapp.R
 import com.example.newsapp.adapter.HomeAdapter
@@ -14,13 +13,9 @@ import com.example.newsapp.data.database.ArticleDao
 import com.example.newsapp.data.model.Article
 import com.example.newsapp.databinding.FragmentHeadlinesBinding
 import com.example.newsapp.ui.details.DetailsActivity
-import com.example.newsapp.util.OnItemClickListener
-import com.example.newsapp.util.hide
-import com.example.newsapp.util.startActivity
-import com.example.newsapp.util.toast
+import com.example.newsapp.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -49,7 +44,7 @@ class HeadlinesFragment : Fragment(), OnItemClickListener {
         _binding = FragmentHeadlinesBinding.inflate(inflater, container, false)
         initViews()
 
-        lifecycleScope.launch {
+        Coroutines.main {
             viewModel.articles.collectLatest { pagedData ->
                 homeAdapter.submitData(pagedData)
             }
@@ -68,22 +63,22 @@ class HeadlinesFragment : Fragment(), OnItemClickListener {
     }
 
 
-    override fun onItemClick(article: Article?) {
-        startActivity(
-            requireActivity(), article!!, DetailsActivity::class.java
-        )
-    }
-
-
-    override fun onSave(article: Article?) {
-        viewModel.saveArticle(article)
-        requireActivity().toast(R.string.saved)
-    }
-
-
-    override fun onDelete(article: Article?) {
-        viewModel.deleteRequest(article)
-        requireActivity().toast(R.string.removed)
+    override fun onItemClick(article: Article?, operation: String) {
+        when (operation) {
+            "save" -> {
+                viewModel.createOperation(article, operation)
+                requireActivity().toast(R.string.saved)
+            }
+            "remove" -> {
+                viewModel.createOperation(article, operation)
+                requireActivity().toast(R.string.removed)
+            }
+            else -> {
+                startActivity(
+                    requireActivity(), article!!, DetailsActivity::class.java
+                )
+            }
+        }
     }
 
 

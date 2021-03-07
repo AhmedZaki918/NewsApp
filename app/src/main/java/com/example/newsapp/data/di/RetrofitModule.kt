@@ -28,8 +28,4 @@ object RetrofitModule {
     @Singleton
     fun provideApiInterface(retrofit: Retrofit): APIInterface =
         retrofit.create(APIInterface::class.java)
-
-
-    @Provides
-    fun provideString() = ""
 }
