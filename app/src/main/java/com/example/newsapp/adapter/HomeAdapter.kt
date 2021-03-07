@@ -11,11 +11,11 @@ import com.example.newsapp.data.model.Article
 import com.example.newsapp.databinding.LayoutHomeBinding
 import com.example.newsapp.databinding.LayoutSecondBinding
 import com.example.newsapp.util.Constants
-import com.example.newsapp.util.OnItemClickListener
+import com.example.newsapp.util.OnAdapterClick
 import com.squareup.picasso.Picasso
 
 class HomeAdapter(
-    val onItemClickListener: OnItemClickListener,
+    val onAdapterClick: OnAdapterClick,
     val articleDao: ArticleDao
 ) : PagingDataAdapter<Article, RecyclerView.ViewHolder>(Constants.USER_COMPARATOR) {
 
@@ -94,12 +94,12 @@ class HomeAdapter(
         override fun onClick(v: View) {
             if (v.id == R.id.ib_save) {
                 if (binding.ibSave.isChecked) {
-                    onItemClickListener.onItemClick(getItem(layoutPosition), "save")
+                    onAdapterClick.onItemClick(getItem(layoutPosition), "save")
                 } else {
-                    onItemClickListener.onItemClick(getItem(layoutPosition), "remove")
+                    onAdapterClick.onItemClick(getItem(layoutPosition), "remove")
                 }
             } else {
-                onItemClickListener.onItemClick(getItem(layoutPosition))
+                onAdapterClick.onItemClick(getItem(layoutPosition))
             }
         }
     }
@@ -126,12 +126,12 @@ class HomeAdapter(
         override fun onClick(v: View) {
             if (v.id == R.id.ib_save) {
                 if (binding.ibSave.isChecked) {
-                    onItemClickListener.onItemClick(getItem(layoutPosition), "save")
+                    onAdapterClick.onItemClick(getItem(layoutPosition), "save")
                 } else {
-                    onItemClickListener.onItemClick(getItem(layoutPosition), "remove")
+                    onAdapterClick.onItemClick(getItem(layoutPosition), "remove")
                 }
             } else {
-                onItemClickListener.onItemClick(getItem(layoutPosition))
+                onAdapterClick.onItemClick(getItem(layoutPosition))
             }
         }
     }

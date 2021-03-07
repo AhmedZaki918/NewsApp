@@ -9,8 +9,9 @@ object Constants {
     const val PAGE_SIZE = 20
     const val MODEL = "ARTICLE_MODEL"
     const val LANGUAGE = "en"
-    const val CATEGORY = "business"
-    const val HEAD_LINES = "headlines"
+    const val BUSINESS = "business"
+    const val TECH = "technology"
+    const val ALL = "ALL_CATEGORY"
 
     // For paging library
     val USER_COMPARATOR = object : DiffUtil.ItemCallback<Article>() {
@@ -18,6 +19,6 @@ object Constants {
             oldItem.source?.id == newItem.source?.id
 
         override fun areContentsTheSame(oldItem: Article, newItem: Article) =
-            oldItem ==  newItem
+            oldItem == newItem
     }
 }

@@ -23,7 +23,7 @@ import javax.inject.Inject
  * A simple [Fragment] subclass.
  */
 @AndroidEntryPoint
-class HeadlinesFragment : Fragment(), OnItemClickListener {
+class HeadlinesFragment : Fragment(), OnAdapterClick {
 
 
     // Initialization

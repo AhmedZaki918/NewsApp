@@ -1,4 +1,4 @@
-package com.example.newsapp.ui.home.business
+package com.example.newsapp.ui.home.tech
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,9 +11,12 @@ import com.example.newsapp.R
 import com.example.newsapp.adapter.HomeAdapter
 import com.example.newsapp.data.database.ArticleDao
 import com.example.newsapp.data.model.Article
-import com.example.newsapp.databinding.FragmentBusinessBinding
+import com.example.newsapp.databinding.FragmentTechBinding
 import com.example.newsapp.ui.details.DetailsActivity
-import com.example.newsapp.util.*
+import com.example.newsapp.util.Coroutines
+import com.example.newsapp.util.OnAdapterClick
+import com.example.newsapp.util.hide
+import com.example.newsapp.util.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -23,14 +26,15 @@ import javax.inject.Inject
  * A simple [Fragment] subclass.
  */
 @AndroidEntryPoint
-class BusinessFragment : Fragment(), OnAdapterClick {
+class TechFragment : Fragment(), OnAdapterClick {
 
 
     // Initialization
-    private var _binding: FragmentBusinessBinding? = null
+    private var _binding: FragmentTechBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: BusinessViewModel
     private lateinit var homeAdapter: HomeAdapter
+    private lateinit var viewModel: TechViewModel
+
 
     @Inject
     lateinit var articleDao: ArticleDao
@@ -41,7 +45,7 @@ class BusinessFragment : Fragment(), OnAdapterClick {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        _binding = FragmentBusinessBinding.inflate(inflater, container, false)
+        _binding = FragmentTechBinding.inflate(inflater, container, false)
         initViews()
 
         Coroutines.main {
@@ -59,7 +63,7 @@ class BusinessFragment : Fragment(), OnAdapterClick {
         homeAdapter = HomeAdapter(this, articleDao)
         binding.recyclerView.layoutManager = LinearLayoutManager(activity)
         binding.recyclerView.adapter = homeAdapter
-        viewModel = ViewModelProvider(this).get(BusinessViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(TechViewModel::class.java)
     }
 
 
@@ -74,7 +78,7 @@ class BusinessFragment : Fragment(), OnAdapterClick {
                 requireActivity().toast(R.string.removed)
             }
             else -> {
-                startActivity(
+                com.example.newsapp.util.startActivity(
                     requireActivity(), article!!, DetailsActivity::class.java
                 )
             }

@@ -23,7 +23,7 @@ class HeadlinesViewModel @Inject constructor(
     ViewModel() {
 
     val articles = Pager(PagingConfig(pageSize = Constants.PAGE_SIZE)) {
-        ArticlesRepo(articleDao, api, Constants.HEAD_LINES)
+        ArticlesRepo(articleDao, api, Constants.ALL)
     }.flow.cachedIn(viewModelScope)
 
 

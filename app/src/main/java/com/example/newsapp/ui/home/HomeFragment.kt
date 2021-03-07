@@ -29,17 +29,20 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         binding.viewPager.adapter = PagerAdapter(requireActivity())
-        binding.viewPager.offscreenPageLimit = 2
+        binding.viewPager.offscreenPageLimit = 3
         TabLayoutMediator(
             binding.tabLayout,
             binding.viewPager
         ) { tab, position ->
             when (position) {
                 0 -> {
-                    tab.text = "Top headlines"
+                    tab.text = "headlines"
                 }
                 1 -> {
                     tab.text = "Business"
+                }
+                2 -> {
+                    tab.text = "Tech"
                 }
             }
         }.attach()

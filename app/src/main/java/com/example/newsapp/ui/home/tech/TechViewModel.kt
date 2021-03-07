@@ -1,4 +1,4 @@
-package com.example.newsapp.ui.home.business
+package com.example.newsapp.ui.home.tech
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,18 +13,15 @@ import com.example.newsapp.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-
 @HiltViewModel
-class BusinessViewModel @Inject constructor(
-    api: APIInterface,
-    articleDao: ArticleDao,
-    private val repo: ArticlesRepo
-) :
-    ViewModel() {
-
+class TechViewModel @Inject constructor(
+    private val repo: ArticlesRepo,
+    private val articleDao: ArticleDao,
+    api: APIInterface
+) : ViewModel() {
 
     val articles = Pager(PagingConfig(pageSize = Constants.PAGE_SIZE)) {
-        ArticlesRepo(articleDao, api, Constants.BUSINESS)
+        ArticlesRepo(articleDao, api, "")
     }.flow.cachedIn(viewModelScope)
 
 

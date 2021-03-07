@@ -7,11 +7,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapp.R
 import com.example.newsapp.data.model.Article
 import com.example.newsapp.databinding.LayoutWishilstBinding
-import com.example.newsapp.util.OnItemClickListener
+import com.example.newsapp.util.OnAdapterClick
 import com.squareup.picasso.Picasso
 
 class WishlistAdapter(
-    val onItemClickListener: OnItemClickListener
+    val onAdapterClick: OnAdapterClick
 ) :
     RecyclerView.Adapter<WishlistAdapter.ViewHolder>() {
 
@@ -70,13 +70,13 @@ class WishlistAdapter(
         override fun onClick(v: View) {
             when (v.id) {
                 R.id.ib_delete -> {
-                    onItemClickListener.onItemClick(list[layoutPosition], "delete")
+                    onAdapterClick.onItemClick(list[layoutPosition], "delete")
                 }
                 R.id.ib_share -> {
-                    onItemClickListener.onItemClick(list[layoutPosition], "share")
+                    onAdapterClick.onItemClick(list[layoutPosition], "share")
                 }
                 else -> {
-                    onItemClickListener.onItemClick(list[layoutPosition])
+                    onAdapterClick.onItemClick(list[layoutPosition])
                 }
             }
         }

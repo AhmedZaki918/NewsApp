@@ -42,10 +42,16 @@ class ArticlesRepo @Inject constructor(
     // Check category type and return required api response
     private suspend fun createRequest(page: Int): ArticlesResponse {
         Constants.apply {
-            return if (category == HEAD_LINES) {
-                api.getHeadlines(API_KEY, LANGUAGE, page)
-            } else {
-                api.getBusiness(API_KEY, LANGUAGE, CATEGORY, page)
+            return when (category) {
+                ALL -> {
+                    api.getAll(API_KEY, LANGUAGE, page)
+                }
+                BUSINESS -> {
+                    api.getCategory(API_KEY, LANGUAGE, BUSINESS, page)
+                }
+                else -> {
+                    api.getCategory(API_KEY, LANGUAGE, TECH, page)
+                }
             }
         }
     }

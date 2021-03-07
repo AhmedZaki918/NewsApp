@@ -1,7 +1,6 @@
 package com.example.newsapp.data.network
 
 import com.example.newsapp.data.model.ArticlesResponse
-import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -9,7 +8,7 @@ import retrofit2.http.Query
 interface APIInterface {
 
     @GET("top-headlines")
-    suspend fun getHeadlines(
+    suspend fun getAll(
         @Query("apiKey") key: String,
         @Query("language") language: String,
         @Query("page") page: Int
@@ -17,7 +16,7 @@ interface APIInterface {
 
 
     @GET("top-headlines")
-    suspend fun getBusiness(
+    suspend fun getCategory(
         @Query("apiKey") key: String,
         @Query("language") language: String,
         @Query("category") category: String,

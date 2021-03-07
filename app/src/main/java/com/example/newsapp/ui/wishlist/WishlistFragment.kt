@@ -23,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
  * A simple [Fragment] subclass.
  */
 @AndroidEntryPoint
-class WishlistFragment : Fragment(), OnItemClickListener, View.OnClickListener {
+class WishlistFragment : Fragment(), OnAdapterClick, View.OnClickListener {
 
     // Initialization
     private var _binding: FragmentWishlistBinding? = null
